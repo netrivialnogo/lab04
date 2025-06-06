@@ -1,0 +1,44 @@
+name: CMake Build
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  Linux:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        compiler: [gcc, clang]
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          mkdir -p _build && cd _build
+          export CC=gcc
+          export CXX=g++
+          cmake ..
+          cmake --build .
+          
+  Windows:
+        runs-on: windows-latest
+        steps:
+          - name: Checkout
+            uses: actions/checkout@v4
+            
+          - name: Set up MSBuild
+            uses: microsoft/setup-msbuild@v1.0.2
+            
+          - run: |
+              mkdir _build
+              cd _build
+              cmake ..
+              cmake --build .
+              
+          - name: Configure and Build Project
+            uses: threeal/cmake-action@v1.3.0
+  
